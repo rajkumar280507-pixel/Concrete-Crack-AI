@@ -15,24 +15,52 @@ def analyze_crack_severity(mask):
     major_regions = [cnt for cnt in contours if cv2.contourArea(cnt) > 30]
     
     # 3. Geometric Metrics
-    filtered_mask = np.zeros_like(mask)
-    if major_regions:
-        cv2.drawContours(filtered_mask, major_regions, -1, 255, -1)
+    # OPTIMIZATION: Skeletonization is slow on high-res images. 
+    # If mask is large, we downscale for geometry calculation then upscale results.
+    h, w = mask.shape
+    max_dim = 1000
+    scale = 1.0
+    
+    if h > max_dim or w > max_dim:
+        scale = max_dim / max(h, w)
+        down_mask = cv2.resize(mask, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_NEAREST)
+        contours_down, _ = cv2.findContours(down_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        major_regions_down = [cnt for cnt in contours_down if cv2.contourArea(cnt) > (30 * scale * scale)]
+        
+        filtered_mask_down = np.zeros_like(down_mask)
+        if major_regions_down:
+            cv2.drawContours(filtered_mask_down, major_regions_down, -1, 255, -1)
+        
+        bool_mask_down = filtered_mask_down > 0
+        crack_length = 0
+        skeleton = None
+        if np.any(bool_mask_down):
+            skeleton_down = skeletonize(bool_mask_down)
+            crack_length = (np.sum(skeleton_down) / scale) # Scale back to original
+            # Upscale skeleton for visualization
+            skeleton = cv2.resize(skeleton_down.astype(np.uint8), (w, h), interpolation=cv2.INTER_NEAREST) > 0
+            
+        total_area = np.sum(mask > 0) # Use original for area count
+        avg_width = total_area / crack_length if crack_length > 0 else 0
+        
+    else:
+        filtered_mask = np.zeros_like(mask)
+        if major_regions:
+            cv2.drawContours(filtered_mask, major_regions, -1, 255, -1)
 
-    # Skeletonization for true length
-    bool_mask = filtered_mask > 0
-    crack_length = 0
-    skeleton = None
-    if np.any(bool_mask):
-        skeleton = skeletonize(bool_mask)
-        crack_length = np.sum(skeleton)
+        # Skeletonization for true length
+        bool_mask = filtered_mask > 0
+        crack_length = 0
+        skeleton = None
+        if np.any(bool_mask):
+            skeleton = skeletonize(bool_mask)
+            crack_length = np.sum(skeleton)
 
-    # Width Estimation (Approximate)
-    # Area = Length * Width => Width = Area / Length
-    avg_width = 0
-    if crack_length > 0:
-        total_area = np.sum(filtered_mask > 0)
-        avg_width = total_area / crack_length
+        # Width Estimation (Approximate)
+        avg_width = 0
+        if crack_length > 0:
+            total_area = np.sum(filtered_mask > 0)
+            avg_width = total_area / crack_length
 
     # 4. Density & Coverage
     total_pixels = mask.size
