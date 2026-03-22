@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crack Detection AI | Structural Health Monitoring</title>
+    <title>Crack Detection AI | Professional Structural Inspection</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
     <style>
         :root {
-            --primary: #0f172a;
-            --secondary: #1e293b;
-            --accent: #0ea5e9; /* Cyan Blue */
-            --accent-vibrant: #38bdf8;
-            --accent-glow: rgba(14, 165, 233, 0.4);
-            --gradient-1: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-            --gradient-vibrant: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --primary: #1e1b4b; /* Deep Indigo */
+            --secondary: #312e81;
+            --accent: #6366f1; /* Electric Indigo */
+            --accent-vibrant: #10b981; /* Emerald Teal */
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Indigo to Purple */
+            --gradient-vibrant: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); /* Teal to Blue */
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --bg: #020617; /* Deepest Navy */
-            --card: rgba(30, 41, 59, 0.7); /* Translucent Navy */
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --header-height: 85px;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-bg: rgba(15, 23, 42, 0.8);
+            --bg: #030712; /* Rich Black */
+            --card: rgba(17, 24, 39, 0.7);
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --header-height: 80px;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(3, 7, 18, 0.85);
+        }
+
+        /* Improved Dropdown Styling for Dark Mode */
+        select option {
+            background-color: #111827;
+            color: #fff;
+            padding: 10px;
+        }
+
+        select:focus {
+            outline: 2px solid var(--accent);
+            background-color: #111827 !important;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            cursor: default;
         }
 
         body {
@@ -39,14 +50,20 @@
             background-color: var(--bg);
             color: var(--text);
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Header Styling with Glassmorphism */
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Header */
         header {
             height: var(--header-height);
             background: var(--glass-bg);
@@ -58,15 +75,12 @@
             justify-content: space-between;
             padding: 0 5%;
             position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            top: 0; width: 100%; z-index: 1000;
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: -0.03em;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -83,739 +97,871 @@
 
         .nav-links {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             background: rgba(255, 255, 255, 0.03);
-            padding: 6px;
+            padding: 5px;
             border-radius: 100px;
             border: 1px solid var(--glass-border);
         }
 
         .nav-item {
             cursor: pointer;
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 100px;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-muted);
         }
 
-        .nav-item:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
+        .nav-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
         .nav-item.active {
             color: #fff;
             background: var(--gradient-1);
             box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
         }
 
-        /* Main Content */
+        /* Main Container */
         main {
             margin-top: calc(var(--header-height) + 2rem);
-            padding: 0 4%;
-            max-width: 1440px;
+            padding: 0 5% 5rem;
+            max-width: 1400px;
             margin-left: auto;
             margin-right: auto;
-            animation: slideUp 0.8s ease-out;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero-section {
-            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.15), transparent),
-                        linear-gradient(135deg, #0f172a 0%, #020617 100%);
-            border-radius: 2.5rem;
-            padding: 4.5rem 3rem;
+        /* Hero / Upload Area */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
             border: 1px solid var(--glass-border);
-            margin-bottom: 3rem;
+            border-radius: 2.5rem;
+            padding: 5rem 2rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.4);
         }
 
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
-            opacity: 0.03;
-        }
-
-        .hero-section h2 { 
-            font-size: 3.5rem; 
+        .hero-card h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
-            margin-bottom: 1.2rem; 
-            background: linear-gradient(to bottom, #fff 30%, #94a3b8 100%);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.6));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            line-height: 1.1;
         }
 
-        /* Upload Card */
-        .upload-card {
+        .hero-card p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 3rem;
+        }
+
+        .upload-zone {
+            max-width: 700px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.02);
             border: 2px dashed rgba(14, 165, 233, 0.3);
-            padding: 4rem;
             border-radius: 2rem;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 4rem 2rem;
+            transition: all 0.4s;
             cursor: pointer;
-            margin-bottom: 2rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            position: relative;
         }
 
-        .upload-card:hover { 
-            border-color: var(--accent); 
-            background: rgba(14, 165, 233, 0.05);
-            transform: scale(1.01);
-            box-shadow: 0 0 40px rgba(14, 165, 233, 0.1);
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(14, 165, 233, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1);
         }
 
-        .btn-upload {
+        .upload-zone i {
+            font-size: 4rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .upload-zone:hover i { transform: scale(1.1); }
+
+        .btn-primary {
             background: var(--gradient-1);
             color: white;
             border: none;
-            padding: 1.1rem 3rem;
+            padding: 1rem 2.5rem;
             border-radius: 100px;
             font-weight: 700;
             font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
-            transition: all 0.4s;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .btn-upload:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.5);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(14, 165, 233, 0.5);
             filter: brightness(1.1);
         }
 
-        /* Dash Cards */
+        /* Loading Overlay */
+        #loadingIndicator {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .loader-ring {
+            width: 60px; height: 60px;
+            border: 4px solid rgba(14, 165, 233, 0.1);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Dashboard Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
         .card {
             background: var(--card);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
-            padding: 2.5rem;
             border-radius: 2rem;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            transition: transform 0.4s;
+            padding: 2.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(14, 165, 233, 0.2);
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
-        .card h3 { 
+        .card h3 {
             font-size: 1.4rem;
-            margin-bottom: 2rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
+            display: flex;
+            align-items: center;
+            gap: 12px;
             color: #fff;
         }
 
-        .card h3 i { color: var(--accent); }
+        .image-viewer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
 
-        .image-compare img {
-            width: 100%;
+        .image-box {
+            position: relative;
             border-radius: 1.5rem;
+            overflow: hidden;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transition: transform 0.5s;
+            aspect-ratio: 4/3;
         }
 
-        .image-compare img:hover {
-            transform: scale(1.02);
+        .image-box img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Analysis Metrics Vibrant Tiles */
+        .image-box:hover img { transform: scale(1.05); }
+
+        .image-label {
+            position: absolute;
+            bottom: 12px; left: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
         .metric-tile {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            background: rgba(255, 255, 255, 0.03);
             padding: 1.5rem;
             border-radius: 1.5rem;
             border: 1px solid var(--glass-border);
-            transition: all 0.3s;
         }
 
-        .metric-tile:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--accent);
-        }
-
-        .metric-tile span { 
-            font-size: 0.75rem; 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.1em;
-        }
-
-        .metric-tile div { 
-            font-family: 'JetBrains Mono', monospace; 
-            font-size: 1.4rem; 
-            font-weight: 800; 
-            color: var(--accent-vibrant);
-            margin-top: 5px;
-        }
-
-        /* Severity Badges - Modern & Bright */
-        .status-badge {
-            padding: 0.6rem 2rem;
-            border-radius: 100px;
-            font-size: 0.9rem;
-            font-weight: 800;
+        .metric-tile span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
         }
 
-        .badge-none { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-mild { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.3); }
-        .badge-moderate { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-severe { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-        .badge-critical { 
-            background: var(--danger); 
-            color: #fff; 
-            animation: pulse-red 2s infinite; 
+        .metric-tile h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--accent-vibrant);
         }
 
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        /* Recommendation Modern box */
-        .recommendation-box {
-            background: rgba(14, 165, 233, 0.05);
-            border: 1px solid rgba(14, 165, 233, 0.2);
-            border-left: 6px solid var(--accent);
+        .severity-badge {
+            margin-top: 2rem;
             padding: 2rem;
             border-radius: 1.5rem;
-            margin: 1.5rem 0;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
         }
 
-        /* Responsive UI */
+        .badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 100px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+        }
+
+        .badge-safe { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; }
+        .badge-none { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; }
+        .badge-mild { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid #0ea5e9; }
+        .badge-moderate { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid #f59e0b; }
+        .badge-severe { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+        .badge-critical { background: #ef4444; color: #fff; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+
+        /* History Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .data-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .results-grid { grid-template-columns: 1fr; }
+            .image-viewer { grid-template-columns: 1fr; }
+        }
+
         @media (max-width: 768px) {
-            .hero-section h2 { font-size: 2.2rem; }
-            .card { padding: 1.5rem; }
             header { padding: 0 1rem; }
+            .nav-item span { display: none; }
             .logo span { display: none; }
         }
-
-        /* Loader Animation */
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body data-has-results="{{ 'true' if original_img else 'false' }}">
+
     <header>
         <div class="logo">
             <i data-lucide="shield-check"></i>
             Crack<span>Detection AI</span>
         </div>
-    <div class="nav-links">
-        <span class="nav-item active" onclick="showTab('dashboard', event)">Dashboard</span>
-        <span class="nav-item" onclick="showTab('live', event)"><span style="display:inline-block; width:8px; height:8px; background:red; border-radius:50%; margin-right:5px; animation: pulse 1s infinite;"></span> Live</span>
-        <span class="nav-item" onclick="showTab('history', event)">History</span>
-        <span class="nav-item" onclick="showTab('reports', event)">Reports</span>
-        <span class="nav-item" onclick="showTab('settings', event)">Settings</span>
-    </div>
-</header>
+        <nav class="nav-links">
+            <div class="nav-item active" onclick="showTab('dashboard', event)">
+                <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showTab('history', event)">
+                <i data-lucide="database"></i> <span>Archive</span>
+            </div>
+            <div class="nav-item" onclick="showTab('live', event)">
+                <i data-lucide="video" style="color: #ef4444;"></i> <span>Live</span>
+            </div>
+            <div class="nav-item" onclick="showTab('settings', event)">
+                <i data-lucide="settings"></i> <span>Config</span>
+            </div>
+        </nav>
+    </header>
 
-<main>
-    <!-- Dashboard Section -->
-    <div id="tab-dashboard" class="tab-content active">
-        {% if not original_img %}
-        <div class="hero-section">
-            <h2>Intelligent Structural Health Monitoring</h2>
-            <p>Advanced AI-driven platform for automated crack detection & infrastructure assessment. Certified for high-precision civil engineering inspections.</p>
-            
-            <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
-                <div class="upload-card" id="dropZone">
-        <div id="upload-view" class="fade-in">
-            <div class="hero-section">
-                <h2>AI-Powered Structural <br><span style="color: var(--accent-vibrant);">Health Monitoring</span></h2>
-                <p>Deploy advanced computer vision to detect, quantify, and analyze structural defects with engineering precision.</p>
+    <main>
+        <!-- Home / Upload Section -->
+        <div id="tab-dashboard" class="tab-content active">
+            {% if not original_img %}
+            <div class="hero-card">
+                <h1>AI-Powered Structural <br><span style="color: var(--accent-vibrant);">Integrity Analysis</span></h1>
+                <p>Advanced computer vision engine for sub-millimeter crack detection, geometric quantification and risk assessment.</p>
                 
                 <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="upload-card" onclick="document.getElementById('fileInput').click()">
-                        <div id="loadingIndicator" style="display: none; margin-bottom: 2rem;">
-                            <div class="spin" style="width: 50px; height: 50px; border: 4px solid rgba(14, 165, 233, 0.2); border-top: 4px solid var(--accent); border-radius: 50%; margin: 0 auto 15px;"></div>
-                            <h3 style="color: var(--accent-vibrant); animation: pulse 2s infinite;">AI Agent Analyzing...</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Calculating crack geometry and structural risk</p>
+                    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <div id="uploadContent">
+                            <i data-lucide="upload-cloud"></i>
+                            <h2>Select Inspection Target</h2>
+                            <p>Drag and drop image or click to browse</p>
+                            <div style="margin-top: 2rem;">
+                                <button type="button" class="btn-primary">
+                                    <i data-lucide="image"></i> Browse Files
+                                </button>
+                            </div>
+                            <p style="font-size: 0.8rem; margin-top: 1.5rem; opacity: 0.6;">Supports: JPG, PNG, WEBP (Max 20MB)</p>
                         </div>
-                        
-                        <div id="uploadText">
-                            <i data-lucide="upload-cloud" style="width: 64px; height: 64px; color: var(--accent); margin-bottom: 1.5rem;"></i>
-                            <h3>Drop Inspection Image</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 2rem;">Supported: JPG, PNG, TIFF (Max 20MB)</p>
-                            <span class="btn-upload">Select File to Scan</span>
+
+                        <div id="loadingIndicator">
+                            <div class="loader-ring"></div>
+                            <h2 style="color: var(--accent-vibrant);">Analyzing Structural Geometry...</h2>
+                            <p>The AI Agent is extracting topology and calculating hazard levels.</p>
                         </div>
-                        <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;" onchange="startAnalysis()">
+
+                        <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;" onchange="submitAnalysis()">
                     </div>
                 </form>
-            </div>
-            
-            <!-- Quick Features -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
-                <div class="card" style="text-align: center; padding: 2rem;">
-                    <i data-lucide="zap" style="color: var(--warning); margin-bottom: 1rem;"></i>
-                    <h4>Instant Detection</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time identification of structural fissures</p>
-                </div>
-                <div class="card" style="text-align: center; padding: 2rem;">
-                    <i data-lucide="ruler" style="color: var(--accent); margin-bottom: 1rem;"></i>
-                    <h4>Quantification</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Precise length and width measurements in px/mm</p>
-                </div>
-                <div class="card" style="text-align: center; padding: 2rem;">
-                    <i data-lucide="shield-check" style="color: var(--success); margin-bottom: 1rem;"></i>
-                    <h4>Risk Assessment</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Automated severity grading per safety standards</p>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
-        <!-- 2. Results Mode -->
-        <div id="results-view" class="dashboard-grid fade-in" style="display: none;">
-            <div class="visual-panel">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3><i data-lucide="layers"></i> Analysis Viewports</h3>
-                        <button class="btn-upload" style="background: rgba(255,255,255,0.05); color: #fff; padding: 0.4rem 1rem;" onclick="location.href='/'">Close & New Scan</button>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <div style="text-align: left; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 1.5rem; border: 1px solid var(--glass-border);">
+                        <i data-lucide="zap" style="color: var(--warning); margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 5px;">Sub-Second Inference</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Instant identification of micro-fissures.</p>
                     </div>
-                    <div class="image-compare">
-                        <div>
-                            <small style="display: block; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.65rem;">Source Inspection</small>
-                            <img id="res-orig-img" src="{{ url_for('static', filename='uploads/' + original_img) if original_img else '#' }}" alt="Original">
+                    <div style="text-align: left; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 1.5rem; border: 1px solid var(--glass-border);">
+                        <i data-lucide="maximize" style="color: var(--accent); margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 5px;">Precision Metrics</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Topological length and geometric width.</p>
+                    </div>
+                    <div style="text-align: left; padding: 1.5rem; background: rgba(255,255,255,0.02); border-radius: 1.5rem; border: 1px solid var(--glass-border);">
+                        <i data-lucide="file-check" style="color: var(--success); margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 5px;">Smart Reporting</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Automated maintenance recommendations.</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Results View -->
+            <div class="results-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i data-lucide="layout"></i> Analysis Preview</h3>
+                        <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: #fff; padding: 0.5rem 1.2rem; box-shadow: none;" onclick="location.href='/'">
+                            <i data-lucide="plus"></i> New Scan
+                        </button>
+                    </div>
+                    <div class="image-viewer">
+                        <div class="image-box">
+                            <span class="image-label">Source</span>
+                            <img src="{{ url_for('static', filename='uploads/' + original_img) }}" alt="Original">
                         </div>
-                        <div>
-                            <small style="display: block; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.65rem;">AI Mask & Skeleton</small>
-                            <img id="res-proc-img" src="{{ url_for('static', filename='uploads/' + processed_img) if processed_img else '#' }}" alt="Processed">
+                        <div class="image-box">
+                            <span class="image-label">AI Augmented</span>
+                            <img src="{{ url_for('static', filename='uploads/' + processed_img) }}" alt="Processed">
                         </div>
                     </div>
+
+                    <div style="margin-top: 2rem; background: rgba(14, 165, 233, 0.05); border-radius: 1.5rem; padding: 2rem; border-left: 5px solid var(--accent);">
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <i data-lucide="info" style="color: var(--accent); flex-shrink: 0; margin-top: 4px;"></i>
+                            <div>
+                                <h4 style="margin-bottom: 8px;">Engineering Recommendation</h4>
+                                <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">{{ report.detailed_recommendation }}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                            <button class="btn-primary" onclick="window.print()">
+                                <i data-lucide="download"></i> Export Data
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card">
-                    <h3><i data-lucide="clipboard-list"></i> Structural Health Report</h3>
-                    <div class="recommendation-box">
-                        <span id="res-action-tag" class="action-tag">{{ report.recommended_action if report }}</span>
-                        <h4 style="margin: 10px 0;">Inspection Summary</h4>
-                        <p id="res-detail-rec" style="font-size: 0.95rem; color: var(--text-muted);">{{ report.detailed_recommendation if report }}</p>
-                    </div>
-                    <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
-                        <button class="btn-upload" id="exportBtn"><i data-lucide="download" style="width: 16px; height: 16px; margin-right: 8px;"></i> Download Documentation</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="metrics-panel">
-                <div class="card">
-                    <h3 style="margin-bottom: 1.5rem;"><i data-lucide="activity"></i> Field Metrics</h3>
-                    <div class="metrics-grid">
+                    <h3><i data-lucide="activity"></i> Data Insights</h3>
+                    <div class="metrics-grid" style="margin-top: 2rem;">
                         <div class="metric-tile">
-                            <span>Defect Classification</span>
-                            <div id="res-label">{{ label if label }}</div>
+                            <span>Classification</span>
+                            <h4>{{ label }}</h4>
                         </div>
                         <div class="metric-tile">
                             <span>Confidence</span>
-                            <div id="res-score">{{ (score|float * 100)|round(2) if score }}%</div>
+                            <h4>{{ (score|float * 100)|round(1) }}%</h4>
                         </div>
                         <div class="metric-tile">
-                            <span>Crack Surface Density</span>
-                            <div id="res-density">{{ report.density_percentage if report }}%</div>
+                            <span>Surface Density</span>
+                            <h4>{{ report.density_percentage }}%</h4>
                         </div>
                         <div class="metric-tile">
-                            <span>Crack Regions</span>
-                            <div id="res-count">{{ report.crack_count if report }} Units</div>
+                            <span>Defect Units</span>
+                            <h4>{{ report.crack_count }}</h4>
                         </div>
                     </div>
 
-                    <div style="margin-top: 2.5rem; padding: 2rem; background: rgba(0,0,0,0.2); border-radius: 1.5rem; text-align: center; border: 1px solid var(--glass-border);">
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.8rem; letter-spacing: 2px;">STRUCTURAL INTEGRITY STATUS</p>
-                        <div id="res-severity-badge" class="status-badge badge-{{ report.severity_level|lower if report }}">
-                            {{ report.severity_level if report }} RISK
+                    <div class="severity-badge">
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 2px;">STRUCTURAL RISK LEVEL</p>
+                        <span class="badge badge-{{ report.severity_level|lower }}">
+                            {{ report.severity_level }}
+                        </span>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1.5rem; border-radius: 1rem; background: rgba(0,0,0,0.2); font-size: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                            <span style="opacity: 0.6;">Unit System:</span>
+                            <select id="unitSelector" onchange="updateUnits()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">
+                                <option value="px">Pixels (px)</option>
+                                <option value="mm">Millimeters (mm)</option>
+                                <option value="cm">Centimeters (cm)</option>
+                                <option value="in">Inches (in)</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="opacity: 0.6;">Est. Crack Length:</span>
+                            <span style="font-family: 'JetBrains Mono'; color: var(--accent-vibrant);"><span class="unit-val" data-px="{{ report.estimated_length_px }}">{{ report.estimated_length_px|round(1) }}</span> <span class="unit-label">px</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.6;">Avg. Aperture (Width):</span>
+                            <span style="font-family: 'JetBrains Mono'; color: var(--accent-vibrant);"><span class="unit-val" data-px="{{ report.avg_width_px }}">{{ report.avg_width_px|round(2) }}</span> <span class="unit-label">px</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- History Section -->
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="database"></i> Inspection Archive</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-primary" style="padding: 8px 15px; background: var(--gradient-vibrant);" onclick="exportFullArchive()">
+                            <i data-lucide="download"></i> Export Full Archive
+                        </button>
+                        <input type="text" id="archiveSearch" placeholder="Search ID or Type..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; color: #fff; font-size: 0.8rem;" onkeyup="filterArchive()">
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Scan ID</th>
+                            <th>Timestamp</th>
+                            <th>Type/Severity</th>
+                            <th>Length</th>
+                            <th>Width</th>
+                            <th>Density</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <!-- Loaded via JS -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                                <div class="loader-ring" style="width: 30px; height: 30px; display: inline-block;"></div>
+                                <p style="margin-top: 1rem;">Retrieving records...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Live View Section -->
+        <div id="tab-live" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="video"></i> Real-Time AI Stream</h3>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 10px; height: 10px; background: red; border-radius: 50%; box-shadow: 0 0 10px red;"></div>
+                        <span style="font-size: 0.8rem; font-weight: 700;">LIVE FEED</span>
+                    </div>
+                </div>
+                <div style="position: relative; border-radius: 1.5rem; overflow: hidden; background: #000; aspect-ratio: 16/9; border: 1px solid var(--glass-border);">
+                    <img id="live-feed" src="" style="width: 100%; height: 100%; object-fit: contain;">
+                    <div style="position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 0.7rem;">
+                        <span id="live-status" style="color: #4ade80;">READY</span> | FPS: <span id="fps-val">--</span>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button class="btn-primary" style="flex: 1;" onclick="toggleStream('start')">
+                        <i data-lucide="play"></i> Initialise Stream
+                    </button>
+                    <button class="btn-primary" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: #ef4444; box-shadow: none; border: 1px solid #ef4444;" onclick="toggleStream('stop')">
+                        <i data-lucide="square"></i> Terminate Feed
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="tab-settings" class="tab-content">
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h3><i data-lucide="settings-2"></i> System Configuration</h3>
+                <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4>Inference Threshold</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Sensitivity for AI classification.</p>
+                        </div>
+                        <input type="range" style="width: 150px;">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4>Hardware Acceleration</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Use GPU for real-time processing.</p>
+                        </div>
+                        <div style="width: 50px; height: 24px; background: var(--accent); border-radius: 20px; position: relative;">
+                            <div style="width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 3px; right: 3px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Live Inspection Tab -->
-    <div id="tab-live" class="tab-content">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3><i data-lucide="video"></i> Real-Time AI Inspection</h3>
-                <span class="status-badge badge-severe" style="background:#fee2e2; color:#ef4444; border:1px solid #fecaca;">LIVE STREAM ENABLED</span>
-            </div>
-            <div style="background: #000; border-radius: 1rem; overflow: hidden; position: relative; aspect-ratio: 16/9;">
-                <img id="live-feed" src="{{ url_for('video_feed') }}" style="width: 100%; height: 100%; object-fit: contain;" alt="Live Video Feed">
-                <div style="position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 5px;">
-                    <div id="live-fps" style="background: rgba(0,0,0,0.6); color: #4ade80; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.75rem;">FPS: 32</div>
-                    <div id="live-objects" style="background: rgba(0,0,0,0.6); color: #fff; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 0.75rem;">DETECTED: --</div>
-                </div>
-                <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: #fff; background: rgba(0,0,0,0.6); padding: 12px; border-radius: 8px; font-size: 0.75rem;">
-                    <i data-lucide="info" style="width:14px; height:14px; vertical-align:middle; margin-right:5px;"></i>
-                    <strong id="live-status">SERVER-SIDE FEED ACTIVE</strong><br>
-                    <span style="opacity: 0.8;">Note: This shows the laptop/server camera. For mobile-site inspection, use the "Dashboard" upload.</span>
-                </div>
-            </div>
-            <div style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <button class="btn-upload" style="margin:0; width:100%;" onclick="toggleStream('start')"><i data-lucide="play"></i> Start/Switch Cam</button>
-                <button class="btn-upload" style="margin:0; width:100%; background:#e2e8f0; color:#475569;" onclick="toggleStream('stop')"><i data-lucide="square"></i> Stop Stream</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- History Tab -->
-    <div id="tab-history" class="tab-content">
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3><i data-lucide="history"></i> Inspection History</h3>
-                <div style="display: flex; gap: 10px;">
-                    <select class="btn-upload" style="background: white; color: var(--text); border: 1px solid #ddd; padding: 0.5rem; margin: 0;">
-                        <option>All Site Locations</option>
-                        <option>Bridge Project A</option>
-                        <option>Tunnel Section B</option>
-                    </select>
-                </div>
-            </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Timestamp</th>
-                        <th>Type</th>
-                        <th>Severity</th>
-                        <th>Action</th>
-                        <th>Manage</th>
-                    </tr>
-                </thead>
-                <tbody id="history-body">
-                    <!-- History will be loaded here via JS -->
-                    <tr>
-                        <td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">
-                            <div class="spin" style="display:inline-block; border: 2px solid var(--accent); border-top-color:transparent; width:20px; height:20px; border-radius:50%; margin-right:10px;"></div>
-                            Loading inspection logs...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
     <script>
-    async function loadHistory() {
-        const body = document.getElementById('history-body');
-        if (!body) return;
-        
-        try {
-            const response = await fetch('/get_history');
-            const data = await response.json();
-            
-            if (data.history && data.history.length > 0) {
-                body.innerHTML = '';
-                data.history.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><code style="background: rgba(14, 165, 233, 0.1); padding: 4px 8px; border-radius: 6px; color: var(--accent-vibrant); font-family: 'JetBrains Mono'; font-size: 0.8rem;">#${item.id}</code></td>
-                        <td style="font-size: 0.8rem; color: var(--text-muted);">${item.timestamp}</td>
-                        <td style="font-weight: 600;">${item.label}</td>
-                        <td><span class="status-badge badge-${item.severity.toLowerCase()}">${item.severity}</span></td>
-                        <td><span style="font-size: 0.8rem;">${item.action}</span></td>
-                        <td>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn-upload" style="padding: 0.4rem 0.8rem; font-size: 0.7rem; min-width: 60px;" onclick="viewScan(${JSON.stringify(item).replace(/"/g, '&quot;')})">View</button>
-                                <button class="btn-upload" style="padding: 0.4rem 0.8rem; font-size: 0.7rem; min-width: 60px; background: var(--gradient-vibrant);" onclick="window.location.href='/download_report/${item.id}'">Export</button>
-                                <button class="btn-upload" style="padding: 0.4rem 0.8rem; font-size: 0.7rem; min-width: 60px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: none;" onclick="deleteScan('${item.id}')">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    body.appendChild(row);
+        // Tab Management
+        function showTab(tabId, event) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.add('active');
+
+            if (event) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const nav = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
+                if (nav) nav.classList.add('active');
+            }
+
+            if (tabId === 'history') loadHistory();
+            localStorage.setItem('lastTab', tabId);
+        }
+
+        // Analysis Logic
+        function submitAnalysis() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) return;
+
+            // UI Feedback
+            document.getElementById('uploadContent').style.display = 'none';
+            document.getElementById('loadingIndicator').style.display = 'flex';
+            document.getElementById('dropZone').style.pointerEvents = 'none';
+            document.getElementById('dropZone').style.borderColor = 'transparent';
+
+            // Submit Form
+            document.getElementById('uploadForm').submit();
+        }
+
+        // Drag & Drop
+        const dropZone = document.getElementById('dropZone');
+        if (dropZone) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+                dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                 });
-            } else {
-                body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem; color: var(--text-muted);">No inspection history found. Start by uploading an image.</td></tr>';
-            }
-        } catch (error) {
-            console.error('Error loading history:', error);
-            body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem; color: var(--danger);">Failed to load history database.</td></tr>';
-        }
-    }
+            });
 
-    function viewScan(item) {
-        // Switch to Dashboard
-        showTab('dashboard');
-        
-        // Hide upload view, Show results view
-        const uploadView = document.getElementById('upload-view');
-        if (uploadView) uploadView.style.display = 'none';
-        
-        const resultsView = document.getElementById('results-view');
-        resultsView.style.display = 'grid';
-        
-        // Populate data
-        document.getElementById('res-orig-img').src = `/static/uploads/${item.original_img}`;
-        document.getElementById('res-proc-img').src = `/static/uploads/${item.processed_img}`;
-        document.getElementById('res-label').innerText = item.label;
-        document.getElementById('res-score').innerText = (parseFloat(item.score) * 100).toFixed(2) + '%';
-        document.getElementById('res-action-tag').innerText = item.action;
-        document.getElementById('res-detail-rec').innerText = item.recommendation;
-        
-        const badge = document.getElementById('res-severity-badge');
-        badge.className = `status-badge badge-${item.severity.toLowerCase()}`;
-        badge.innerText = `${item.severity} RISK`;
-        
-        // Setup download button
-        document.getElementById('exportBtn').onclick = () => window.location.href = `/download_report/${item.id}`;
-        
-        if (window.lucide) lucide.createIcons();
-    }
-
-    async function deleteScan(scanId) {
-        if (!confirm(`Are you sure you want to delete inspection report #${scanId}?`)) return;
-        
-        try {
-            const response = await fetch(`/delete_scan/${scanId}`, { method: 'POST' });
-            const result = await response.json();
-            if (result.status === 'success') {
-                loadHistory(); // Refresh table
-            } else {
-                alert('Error: ' + result.message);
-            }
-        } catch (error) {
-            alert('Failed to delete report.');
+            dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+            dropZone.addEventListener('drop', (e) => {
+                dropZone.classList.remove('dragover');
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                submitAnalysis();
+            });
         }
-    }
+
+        // Global variable to store history for viewing
+        let fullHistory = [];
+
+        // History Loader
+        async function loadHistory() {
+            const body = document.getElementById('history-body');
+            console.log("INFO: Attempting to load archive data...");
+            try {
+                const res = await fetch('/get_history');
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                
+                const data = await res.json();
+                fullHistory = data.history || [];
+                console.log(`INFO: Loaded ${fullHistory.length} records.`);
+                
+                if (fullHistory.length === 0) {
+                    body.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 4rem; opacity: 0.5;">No records found. Start your first scan to populate the archive.</td></tr>';
+                    return;
+                }
+
+                renderHistoryTable(fullHistory);
+            } catch (e) {
+                console.error("ERROR: Failed to load archive:", e);
+                body.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 3rem;">
+                    <i data-lucide="alert-triangle" style="color: var(--danger); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--danger);">System could not retrieve archive records.</p>
+                    <button class="btn-primary" style="margin-top: 1rem; font-size: 0.8rem;" onclick="loadHistory()">Try Again</button>
+                </td></tr>`;
+                lucide.createIcons();
+            }
+        }
+
+        function renderHistoryTable(data) {
+            const body = document.getElementById('history-body');
+            
+            // Scaler for units (consistent with dashboard)
+            const unit = localStorage.getItem('preferredUnit') || 'px';
+            const pxToMm = 0.2646;
+            
+            body.innerHTML = data.map(h => {
+                const metrics = h.report || {};
+                const rawLength = metrics.estimated_length_px || 0;
+                const rawWidth = metrics.avg_width_px || 0;
+                
+                // Convert values for the table view
+                let convLen, convWid;
+                switch(unit) {
+                    case 'mm': convLen = rawLength * pxToMm; convWid = rawWidth * pxToMm; break;
+                    case 'cm': convLen = (rawLength * pxToMm) / 10; convWid = (rawWidth * pxToMm) / 10; break;
+                    case 'in': convLen = (rawLength * pxToMm) / 25.4; convWid = (rawWidth * pxToMm) / 25.4; break;
+                    default: convLen = rawLength; convWid = rawWidth;
+                }
+
+                return `
+                    <tr data-id="${h.id}">
+                        <td><code style="color: var(--accent); font-weight: 800;">#${h.id.split('-')[1] || h.id}</code></td>
+                        <td style="font-size: 0.8rem; opacity: 0.6;">${new Date(h.timestamp).toLocaleDateString()}</td>
+                        <td>
+                            <div style="font-weight: 700;">${h.label}</div>
+                            <span class="badge" style="font-size: 0.55rem; padding: 2px 8px; margin-top: 4px; border: 1px solid currentColor;">${h.severity}</span>
+                        </td>
+                        <td style="font-family: 'JetBrains Mono';">${convLen.toFixed(1)}<small>${unit}</small></td>
+                        <td style="font-family: 'JetBrains Mono';">${convWid.toFixed(2)}<small>${unit}</small></td>
+                        <td style="color: var(--accent-vibrant); font-weight: 700;">${(metrics.density_percentage || 0).toFixed(2)}%</td>
+                        <td style="display: flex; gap: 6px; align-items: center;">
+                            <button class="btn-primary" style="padding: 6px 10px; font-size: 0.7rem;" onclick="viewScanFromArchive('${h.id}')">
+                                <i data-lucide="eye" style="width:12px;"></i> View
+                            </button>
+                            <button class="btn-primary" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; box-shadow: none;" onclick="deleteRecord('${h.id}')">
+                                <i data-lucide="trash-2" style="width: 12px;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function filterArchive() {
+            const query = document.getElementById('archiveSearch').value.toLowerCase();
+            const filtered = fullHistory.filter(h => 
+                h.id.toLowerCase().includes(query) || 
+                h.label.toLowerCase().includes(query) ||
+                h.severity.toLowerCase().includes(query)
+            );
+            renderHistoryTable(filtered);
+        }
+
+        function viewScanFromArchive(id) {
+            const scan = fullHistory.find(h => h.id === id);
+            if (!scan) return;
+
+            // Update UI to simulate a result load
+            const dashboard = document.getElementById('tab-dashboard');
+            
+            // Create a temporary result view if we are on the landing page
+            dashboard.innerHTML = `
+                <div class="results-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i data-lucide="layout"></i> Analysis Preview Archive [#${scan.id}]</h3>
+                            <button class="btn-primary" style="background: rgba(255,255,255,0.05); color: #fff; padding: 0.5rem 1.2rem; box-shadow: none;" onclick="location.href='/'">
+                                <i data-lucide="arrow-left"></i> Exit View
+                            </button>
+                        </div>
+                        <div class="image-viewer">
+                            <div class="image-box">
+                                <span class="image-label">Source</span>
+                                <img src="/static/uploads/${scan.original_img}" alt="Original">
+                            </div>
+                            <div class="image-box">
+                                <span class="image-label">AI Augmented</span>
+                                <img src="/static/uploads/${scan.processed_img}" alt="Processed">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem; background: rgba(14, 165, 233, 0.05); border-radius: 1.5rem; padding: 2rem; border-left: 5px solid var(--accent);">
+                            <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                <i data-lucide="info" style="color: var(--accent); flex-shrink: 0; margin-top: 4px;"></i>
+                                <div>
+                                    <h4 style="margin-bottom: 8px;">Engineering Recommendation</h4>
+                                    <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">${scan.recommendation}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3><i data-lucide="activity"></i> Data Insights</h3>
+                        <div class="metrics-grid" style="margin-top: 2rem;">
+                            <div class="metric-tile">
+                                <span>Classification</span>
+                                <h4>${scan.label}</h4>
+                            </div>
+                            <div class="metric-tile">
+                                <span>Confidence</span>
+                                <h4>${(parseFloat(scan.score) * 100).toFixed(1)}%</h4>
+                            </div>
+                            <div class="metric-tile">
+                                <span>Surface Density</span>
+                                <h4>${scan.report.density_percentage || 0}%</h4>
+                            </div>
+                            <div class="metric-tile">
+                                <span>Defect Units</span>
+                                <h4>${scan.crack_count}</h4>
+                            </div>
+                        </div>
+
+                        <div class="severity-badge">
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 2px;">STRUCTURAL RISK LEVEL</p>
+                            <span class="badge badge-${scan.severity.toLowerCase()}">
+                                ${scan.severity}
+                            </span>
+                        </div>
+
+                        <div style="margin-top: 2rem; padding: 1.5rem; border-radius: 1rem; background: rgba(0,0,0,0.2); font-size: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                                <span style="opacity: 0.6;">Unit System:</span>
+                                <select id="unitSelector" onchange="updateUnits()" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="px">Pixels (px)</option>
+                                    <option value="mm">Millimeters (mm)</option>
+                                    <option value="cm">Centimeters (cm)</option>
+                                    <option value="in">Inches (in)</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="opacity: 0.6;">Est. Crack Length:</span>
+                                <span style="font-family: 'JetBrains Mono'; color: var(--accent-vibrant);"><span class="unit-val" data-px="${scan.report.estimated_length_px || 0}">${scan.report.estimated_length_px || 0}</span> <span class="unit-label">px</span></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="opacity: 0.6;">Avg. Aperture (Width):</span>
+                                <span style="font-family: 'JetBrains Mono'; color: var(--accent-vibrant);"><span class="unit-val" data-px="${scan.report.avg_width_px || 0}">${scan.report.avg_width_px || 0}</span> <span class="unit-label">px</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showTab('dashboard');
+            lucide.createIcons();
+            updateUnits(); // Apply preferred unit to the restored view
+        }
+
+        function exportFullArchive() {
+            if (fullHistory.length === 0) return alert('No data to export.');
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullHistory, null, 4));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("download", "crack_inspection_full_archive.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // Live Feed
+        function toggleStream(status) {
+            const feed = document.getElementById('live-feed');
+            const label = document.getElementById('live-status');
+            if (status === 'start') {
+                feed.src = "{{ url_for('video_feed') }}";
+                label.innerText = "STREAM ACTIVE";
+                label.style.color = "#4ade80";
+            } else {
+                feed.src = "";
+                label.innerText = "IDLE";
+                label.style.color = "#94a3b8";
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const lastTab = localStorage.getItem('lastTab') || 'dashboard';
+            const hasResults = document.body.getAttribute('data-has-results') === 'true';
+            
+            if (hasResults) {
+                showTab('dashboard');
+                // Restore saved unit if on results page
+                const savedUnit = localStorage.getItem('preferredUnit') || 'px';
+                const selector = document.getElementById('unitSelector');
+                if (selector) {
+                    selector.value = savedUnit;
+                    updateUnits();
+                }
+            } else {
+                showTab(lastTab);
+            }
+        });
+
+        function updateUnits() {
+            const selector = document.getElementById('unitSelector');
+            if (!selector) return;
+            
+            const unit = selector.value;
+            localStorage.setItem('preferredUnit', unit);
+            
+            // Scaler: Reference 1px = 0.264583 mm (standard 96 DPI baseline)
+            const pxToMm = 0.2646; 
+            
+            document.querySelectorAll('.unit-val').forEach(el => {
+                const pxVal = parseFloat(el.getAttribute('data-px'));
+                let converted = pxVal;
+                let decimals = 1;
+
+                switch(unit) {
+                    case 'mm': converted = pxVal * pxToMm; decimals = 2; break;
+                    case 'cm': converted = (pxVal * pxToMm) / 10; decimals = 3; break;
+                    case 'in': converted = (pxVal * pxToMm) / 25.4; decimals = 4; break;
+                    default: converted = pxVal; decimals = 1;
+                }
+                
+                el.innerText = converted.toLocaleString(undefined, {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals
+                });
+            });
+
+            document.querySelectorAll('.unit-label').forEach(el => {
+                el.innerText = unit;
+            });
+        }
     </script>
-
-    <!-- Reports Tab -->
-    <div id="tab-reports" class="tab-content">
-        <div class="card">
-            <h3><i data-lucide="file-text"></i> Compliance Reports</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-                <div class="recommendation-box">
-                    <div style="display: flex; justify-content: space-between;">
-                        <h4 style="margin: 0;">Site Inspection: Section B-2</h4>
-                        <span class="status-badge badge-moderate">Moderate</span>
-                    </div>
-                    <p style="font-size: 0.8rem; margin: 0.5rem 0;">A detailed assessment of structural integrity following AI analysis of surface defects.</p>
-                    <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #e2e8f0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <small>Ref: #REP-2024-001</small>
-                        <button class="btn-upload" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Open PDF</button>
-                    </div>
-                </div>
-                <div class="recommendation-box">
-                    <div style="display: flex; justify-content: space-between;">
-                        <h4 style="margin: 0;">Column Stability Report</h4>
-                        <span class="status-badge badge-none">Pass</span>
-                    </div>
-                    <p style="font-size: 0.8rem; margin: 0.5rem 0;">Baseline inspection for quarterly maintenance compliance.</p>
-                    <hr style="margin: 1rem 0; border: 0; border-top: 1px solid #e2e8f0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <small>Ref: #REP-2024-002</small>
-                        <button class="btn-upload" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Open PDF</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Tab -->
-    <div id="tab-settings" class="tab-content">
-        <div class="dashboard-grid">
-            <div class="card">
-                <h3><i data-lucide="sliders"></i> Inspection Parameters</h3>
-                <div class="settings-row">
-                    <div class="settings-info">
-                        <h5>Crack Detection Sensitivity</h5>
-                        <p>Adjust threshold for noise filtering in surface texture.</p>
-                    </div>
-                    <input type="range" style="width: 100px;">
-                </div>
-                <div class="settings-row">
-                    <div class="settings-info">
-                        <h5>Camera Source</h5>
-                        <p>Select input for live inspection.</p>
-                    </div>
-                    <select id="camera-selector" style="padding: 0.3rem; border-radius: 4px;">
-                        <option value="0">Default (Integrated)</option>
-                        <option value="1">External / Phone Cam</option>
-                        <option value="2">USB Inspection Cam</option>
-                    </select>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-info">
-                        <h5>Measurement Unit</h5>
-                        <p>Default unit for report generation.</p>
-                    </div>
-                    <select id="unit-selector" onchange="updateUnits()" style="padding: 0.3rem; border-radius: 4px;">
-                        <option value="px">Pixels (px)</option>
-                        <option value="mm">Millimeters (mm)</option>
-                        <option value="cm">Centimeters (cm)</option>
-                        <option value="m">Meters (m)</option>
-                        <option value="in">Inches (in)</option>
-                    </select>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-info">
-                        <h5>Auto-Classification</h5>
-                        <p>Enable AI-led structural risk assessment.</p>
-                    </div>
-                    <input type="checkbox" checked>
-                </div>
-            </div>
-            <div class="card">
-                <h3><i data-lucide="user"></i> Inspector Account</h3>
-                <div style="text-align: center; padding: 1rem 0;">
-                    <div style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
-                        <i data-lucide="user" style="color: #64748b;"></i>
-                    </div>
-                    <h4 style="margin: 0;">Lead Civil Engineer</h4>
-                    <p style="font-size: 0.8rem; color: #64748b;">ID: CE-99210-A</p>
-                    <button class="btn-upload" style="width: 100%; margin-top: 1.5rem;">Update Profile</button>
-                    <button class="btn-upload" style="width: 100%; background: white; color: var(--danger); border: 1px solid #fee2e2; margin-top: 0.5rem;" onclick="location.reload();">Refresh Account</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<script>
-    lucide.createIcons();
-
-    // Consolidated Core Logic
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.lucide) lucide.createIcons();
-        
-        // Auto-show results if data exists from server (upload complete)
-        const hasResults = document.body.getAttribute('data-has-results') === 'true';
-        if (hasResults) {
-            const resultsView = document.getElementById('results-view');
-            if (resultsView) resultsView.style.display = 'grid';
-            
-            const uploadView = document.getElementById('upload-view');
-            if (uploadView) uploadView.style.display = 'none';
-        }
-
-        // Restore active tab
-        const savedTab = localStorage.getItem('activeTab') || 'dashboard';
-        showTab(savedTab);
-
-        // Restore saved unit
-        const savedUnit = localStorage.getItem('selectedUnit') || 'px';
-        const unitSelector = document.getElementById('unit-selector');
-        if (unitSelector) {
-            unitSelector.value = savedUnit;
-            updateUnits(); 
-        }
-
-        // 2. Navigate to appropriate section
-        if (hasResults) {
-            showTab('dashboard'); 
-        } else if (savedTab) {
-            showTab(savedTab);
-        } else {
-            showTab('dashboard'); 
-        }
-    });
-
-    function showTab(tabId, event) {
-        // 1. Hide all contents
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-            tab.style.display = 'none';
-        });
-
-        // 2. Remove active state from all nav items
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        
-        // 3. Show target tab
-        const targetTab = document.getElementById('tab-' + tabId);
-        if (targetTab) {
-            targetTab.classList.add('active');
-            targetTab.style.display = 'block';
-        }
-        
-        // 5. If History tab, load data from DB
-        if (tabId === 'history') {
-            loadHistory();
-        }
-        
-        // 4. Set active nav item
-        if (event && event.currentTarget) {
-            event.currentTarget.classList.add('active');
-        } else {
-            const navItem = document.querySelector(`.nav-item[onclick*="'${tabId}'"]`);
-            if (navItem) navItem.classList.add('active');
-        }
-        
-        localStorage.setItem('activeTab', tabId);
-
-        // Re-calculate icons for newly revealed tabs
-        if (window.lucide) lucide.createIcons();
-    }
-
-    function updateUnits() {
-        const unitSelector = document.getElementById('unit-selector');
-        if (!unitSelector) return;
-        
-        const unit = unitSelector.value;
-        localStorage.setItem('selectedUnit', unit);
-        
-        const pxToMm = 0.2646; // Baseline
-        
-        document.querySelectorAll('[data-px]').forEach(el => {
-            const pxValue = parseFloat(el.getAttribute('data-px'));
-            let converted;
-            let decimals = 2;
-
-            switch(unit) {
-                case 'mm': converted = pxValue * pxToMm; break;
-                case 'cm': converted = pxValue * pxToMm / 10; break;
-                case 'm':  converted = pxValue * pxToMm / 1000; decimals = 4; break;
-                case 'in': converted = pxValue * pxToMm / 25.4; break;
-                default:   converted = pxValue; decimals = 1;
-            }
-            
-            el.innerText = converted.toFixed(decimals);
-        });
-
-        document.querySelectorAll('.unit-label').forEach(el => {
-            el.innerText = unit;
-        });
-    }
-
-    function toggleStream(status) {
-        const feed = document.getElementById('live-feed');
-        const subSelector = document.getElementById('camera-selector');
-        if(!feed || !subSelector) return;
-
-        const camId = subSelector.value;
-        if(status === 'stop') {
-            feed.src = "";
-            document.getElementById('live-status').innerText = "System Idle";
-        } else {
-            feed.src = "{{ url_for('video_feed') }}?cam=" + camId;
-            document.getElementById('live-status').innerText = "Acquiring Stream...";
-        }
-    }
-</script>
 </body>
 </html>

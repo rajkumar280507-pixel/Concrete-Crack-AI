@@ -66,28 +66,32 @@ def index():
 
 @app.route('/get_history')
 def get_history():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM scans ORDER BY timestamp DESC')
-    rows = cursor.fetchall()
-    conn.close()
-    
-    history = []
-    for row in rows:
-        history.append({
-            'id': row[0],
-            'timestamp': row[1],
-            'original_img': row[2],
-            'processed_img': row[3],
-            'label': row[4],
-            'score': row[5],
-            'crack_count': row[6],
-            'severity': row[7],
-            'hazard': row[8],
-            'action': row[9],
-            'recommendation': row[10]
-        })
-    return {"history": history}
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM scans ORDER BY timestamp DESC')
+            rows = cursor.fetchall()
+            
+            history = []
+            for row in rows:
+                history.append({
+                    'id': row[0],
+                    'timestamp': row[1],
+                    'original_img': row[2],
+                    'processed_img': row[3],
+                    'label': row[4],
+                    'score': row[5],
+                    'crack_count': row[6],
+                    'severity': row[7],
+                    'hazard': row[8],
+                    'action': row[9],
+                    'recommendation': row[10],
+                    'report': json.loads(row[11]) if row[11] else {}
+                })
+            return {"status": "success", "history": history}
+    except Exception as e:
+        print(f"ERROR: Fetching history failed: {e}")
+        return {"status": "error", "message": str(e)}, 500
 
 @app.route('/delete_scan/<scan_id>', methods=['POST'])
 def delete_scan(scan_id):
@@ -246,5 +250,7 @@ def video_feed():
     return Response(gen_frames(cam_id), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    # host='0.0.0.0' allows access from other devices (like your phone) on the same Wi-Fi
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    # host='0.0.0.0' allows access from other devices
+    # port is fetched from environment variable (required for Hugging Face/Render)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', debug=True, port=port)
