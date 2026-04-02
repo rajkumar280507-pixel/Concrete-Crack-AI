@@ -1,13 +1,5 @@
 import os
 import cv2
-try:
-    import torch
-    import torch.nn as nn
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
-    print("Warning: PyTorch not found. Using Pure OpenCV Forensic Engine.")
-
 import datetime
 import time
 import numpy as np
@@ -29,23 +21,12 @@ from src.visualization import visualize_results
 class ConcreteCrackDetector:
     """
     End-to-end Forensic Crack Detection Suite.
-    No early-exit policy: Every image is fully analyzed.
+    Ultra-Lightweight Engine: Optimized for 512MB RAM constraints.
     """
     def __init__(self, model_path=None, device="cpu"):
-        self.device = device
+        self.device = "cpu" # Force CPU for lightweight execution
         self.weights_loaded = False
         self.model = None
-        
-        if TORCH_AVAILABLE:
-            from src.segmentation import UNet
-            self.model = UNet(n_channels=3, n_classes=1)
-            if model_path and os.path.exists(model_path):
-                try:
-                    self.model.load_state_dict(torch.load(model_path, map_location=device))
-                    self.weights_loaded = True
-                    self.model.to(device)
-                except Exception as e:
-                    print(f"Model alert: {e}")
 
     def analyze_frame(self, frame):
         """
@@ -81,7 +62,6 @@ class ConcreteCrackDetector:
              return rel_path
 
         # Phase 0: Forensic Surface Validation (NO EARLY EXIT)
-        # We determine if the surface is standard concrete or 'low-confidence' concrete
         is_standard, surf_conf = validate_surface(image)
         surface_label = "Concrete" if is_standard else "Concrete (low-confidence validation)"
         
@@ -94,7 +74,7 @@ class ConcreteCrackDetector:
         p2 = save_stage(enhanced, "p2", "SIGNAL OPTIMIZATION (CLAHE)")
         
         # Phase 3: Crack Region Isolation
-        # Convert to BGR for segmentation model compatibility
+        # Pure CV Engine: High precision adaptive segmentation
         initial_mask = structural_forensic_segmentation(cv2.cvtColor(enhanced, cv2.COLOR_GRAY2BGR), self.model, self.device, self.weights_loaded, detection_mode=detection_mode)
         if initial_mask is None: initial_mask = np.zeros(enhanced.shape[:2], dtype=np.uint8)
         
@@ -118,8 +98,7 @@ class ConcreteCrackDetector:
         analysis['mask_binary'] = full_mask
         analysis['geometry']['roi_offset'] = (x, y)
         
-        # Calculate a more robust forensic confidence
-        # It's a combination of surface validation and crack strength (area/length)
+        # Forensic Confidence
         detection_conf = 0.0
         if analysis.get('crack_detected'):
             # Base confidence of detection is high if the geometry filters passed

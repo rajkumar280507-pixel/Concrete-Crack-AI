@@ -8,7 +8,6 @@ import shutil
 import sqlite3
 import datetime
 import numpy as np
-import torch
 from fpdf import FPDF
 
 # Add Project Root to Path for 'src' package discovery
@@ -30,9 +29,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize detector
 detector = None
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 try:
-    detector = ConcreteCrackDetector(model_path=MODEL_PATH, device=device)
+    detector = ConcreteCrackDetector()
 except Exception as e:
     print(f"Warning: Could not initialize ConcreteCrackDetector. {e}")
 

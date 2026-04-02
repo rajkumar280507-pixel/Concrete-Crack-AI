@@ -245,13 +245,24 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        
+        /* Mobile Speed Optimization: Reduced Blur/Transparency */
+        @media (max-width: 768px) {
+            :root { --header-h: 60px; }
+            .figure:hover { transform: none; }
+            .card { backdrop-filter: blur(5px); }
+            .hero-banner h1 { font-size: 2.2rem; }
+            .hero-banner p { font-size: 0.9rem; }
+            .upload-card { padding: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
     <div id="loadingOverlay">
         <div class="dna-spinner"></div>
-        <p style="margin-top: 1.5rem; font-weight: 600;">Processing Vision Pipeline...</p>
+        <p id="loadingMsg" style="margin-top: 1.5rem; font-weight: 600;">Uploading Forensic Data...</p>
+        <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 8px;">Large mobile photos may take a few seconds.</p>
     </div>
 
 

@@ -1,33 +1,5 @@
 import cv2
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-class DoubleConv(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super().__init__()
-        self.double_conv = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
-        )
-    def forward(self, x):
-        return self.double_conv(x)
-
-class UNet(nn.Module):
-    def __init__(self, n_channels=3, n_classes=1):
-        super().__init__()
-        self.inc = DoubleConv(n_channels, 64)
-        self.outc = nn.Conv2d(64, n_classes, 1)
-        self.sigmoid = nn.Sigmoid()
-
-    def forward(self, x):
-        x = self.inc(x)
-        return self.sigmoid(self.outc(x))
 
 def filter_thin_elongated_components(mask, mode="all"):
     """
@@ -63,7 +35,7 @@ def filter_thin_elongated_components(mask, mode="all"):
 def structural_forensic_segmentation(image, model=None, device="cpu", use_dl=False, detection_mode="all"):
     """
     Hybrid adaptive signal acquisition.
-    Tuned for forensic accuracy.
+    Tuned for forensic accuracy. (Ultra-Lightweight CV Engine)
     """
     if image is None: return None
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
