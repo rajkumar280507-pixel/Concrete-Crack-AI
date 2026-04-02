@@ -624,12 +624,19 @@
             }
         }
 
-        async function deleteRecord(id) {
+        async function deleteScan(id) {
             if (!confirm('Permanent deletion of record?')) return;
             try {
-                await fetch(`/delete_scan/${id}`, { method: 'POST' });
-                loadHistory();
-            } catch (e) { alert('System error during deletion.'); }
+                const res = await fetch(`/delete/${id}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    loadHistory();
+                } else {
+                    alert('Deletion failed: ' + data.error);
+                }
+            } catch (e) { 
+                alert('System error during deletion.'); 
+            }
         }
 
         // Live Feed Engine

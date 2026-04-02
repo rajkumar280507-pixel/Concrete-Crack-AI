@@ -218,6 +218,37 @@ def gen_frames():
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/delete/<int:scan_id>', methods=['POST'])
+def delete_scan(scan_id):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        # Get filename to delete the actual image file too
+        cursor.execute("SELECT filename FROM scans_v2 WHERE id = ?", (scan_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            filename = row[0]
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            
+            # Delete stage images if they exist
+            img_id = os.path.splitext(filename)[0]
+            stages_dir = os.path.join(UPLOAD_FOLDER, 'stages')
+            for f in os.listdir(stages_dir):
+                if img_id in f:
+                    os.remove(os.path.join(stages_dir, f))
+        
+        cursor.execute("DELETE FROM scans_v2 WHERE id = ?", (scan_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Delete Error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', debug=True, port=port)
