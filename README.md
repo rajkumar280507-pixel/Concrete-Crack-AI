@@ -1,54 +1,49 @@
-# Crack Detection AI – Intelligent Structural Inspection System
+# Concrete Crack Intelligence Suite (CCIS) 🏗️
+### AI-Powered Forensic Structural Inspection Platform
 
-## 🏗️ Project Overview
-**Crack Detection AI** is a professional-grade AI inspection platform designed for automated structural health monitoring. It leverages advanced Computer Vision (OpenCV) and Deep Learning (TensorFlow) to detect, segment, and analyze cracks in civil infrastructure like bridges, buildings, pavements, and tunnels.
+**Concrete Crack Intelligence Suite (CCIS)** is a state-of-the-art engineering platform for the autonomous detection, quantification, and forensic assessment of concrete fractures. It transforms visual inspections into quantitative engineering data mapped to civil standards.
 
-Unlike basic classifiers, **Crack Detection AI** provides quantitative engineering metrics, including topological crack length, approximate width, and density-based hazard assessment.
+---
 
 ## 🌟 Key Features
--   🔍 **Precision Detection:** Distinguishes structural cracks from surface pores, stains, and construction joints.
--   📐 **Quantitative Metrics:** Estimates crack length (skeleton-based) and average width (geometric-based).
--   📉 **Hazard Assessment:** Classifies severity into Mild, Moderate, Severe, or Critical based on ACI/Eurocode standards.
--   🎨 **Engineering Dashboard:** Side-by-side visualization with detection heatmaps and centerline skeletons.
--   📜 **Recommendation Engine:** Generates actionable repair advice (e.g., Monitoring, Epoxy Injection, Structural Patching).
+- **9-Phase Inspection Pipeline**: A deterministic forensic chain from surface validation to final hazard assessment.
+- **Sub-Pixel Quantification**: Calibrated measurement of crack length, average aperture (width), and maximum width.
+- **Adaptive Multi-Mode Analysis**: Select specialized detection logic for Structural, Alligator (Fatigue), Hairline, or Thermal cracks.
+- **PDF Forensic Reports**: Automated generation of archived PDF reports for legal and engineering documentation.
+- **Real-Time Stream**: Low-latency video engine for immediate on-site structural preliminary checks.
 
 ## 🛠️ Technical Stack
--   **Backend:** Python 3.10+, Flask
--   **AI/ML:** TensorFlow/Keras (CNN), scikit-image (Skeletonization)
--   **Computer Vision:** OpenCV (Bilateral Filtering, Adaptive Thresholding, Hough Line Transform)
--   **Frontend:** HTML5, CSS3 (Modern Dashboard UI), Lucide Icons
+- **Engine:** Python 3.10+
+- **Vision Architecture:** OpenCV / PyTorch
+- **Backend Infrastructure:** Flask
+- **Aesthetics & UI:** Responsive HTML5 / Modern CSS (Dark Mode Optimized)
+- **Database:** SQLite3 Forensic Store
 
 ## 📂 Project Structure
 ```text
-crack_detection_ai/
-│
-├── src/
-│   ├── preprocessing.py    # Texture suppression & adaptive segmentation
-│   ├── detect_crack.py     # Inference pipeline & classification
-│   ├── severity_analysis.py # Geometric metrics & recommendation engine
-│   └── visualization.py    # Professional heatmap & skeleton overlays
-├── webapp/                 # Civils.AI Flask Dashboard
-├── models/                 # Pre-trained CNN (model.h5)
-└── requirements.txt        # Managed dependencies
+crack-detection-ai/
+├── src/                    # Forensic Vision Engine
+│   ├── detect_crack.py     # End-to-End Orchestration
+│   ├── measurement.py      # Dimensional & Severity Logic
+│   ├── segmentation.py     # Adaptive Signal Acquisition
+│   └── visualization.py    # Professional HUD Overlays
+├── webapp/                 # Inspector Interface
+│   ├── app.py              # Flask Forensic Controller
+│   └── templates/index.html # High-Performance Dashboard
+├── models/                 # Pre-trained Vision Weights (Optional)
+└── forensic_v1.db          # Inspection Database
 ```
 
-## 🚀 Quick Start
-1.  **Install Dependencies:**
+## 🚀 Getting Started
+1.  **Environment Setup:**
     ```bash
     pip install -r requirements.txt
     ```
-2.  **Start the Dashboard:**
+2.  **Launch Platform:**
     ```bash
     python webapp/app.py
     ```
-3.  **Access Platform:** Open `http://127.0.0.1:5000`
+3.  **Inspection Access:** Visit `http://localhost:5000`
 
-## 📊 Evaluation Logic
-Civils.AI uses a multi-stage validation pipeline:
-1.  **Stage 1:** AI Classification (Crack vs No-Crack).
-2.  **Stage 2:** Bilateral feature enhancement and adaptive thresholding.
-3.  **Stage 3:** Skeletonization for accurate topological path extraction.
-4.  **Stage 4:** Mapping geometric data to Civil Engineering maintenance protocols.
-
-## ⚖️ License
-MIT License - Professional Use Recommended.
+---
+*Developed for Structural Health Monitoring and Civil Forensic Analysis.*

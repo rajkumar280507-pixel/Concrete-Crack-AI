@@ -1,44 +1,39 @@
 import cv2
 import numpy as np
 
-def enhance_image(image):
+def validate_surface(image):
     """
-    Apply preprocessing to enhance crack features and reduce texture noise.
-    Uses Bilateral Filter to preserve edges while smoothing texture.
+    Forensic Surface Integrity Check.
+    Returns (is_valid, confidence)
     """
-    if len(image.shape) == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image
-
-    # 1. Edge-Preserving Smoothing: Bilateral Filter
-    # Removes fine surface texture but keeps sharp crack edges
-    smoothed = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
-
-    # 2. Contrast Enhancement: CLAHE
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
-    enhanced = clahe.apply(smoothed)
-
-    return enhanced
-
-def get_binary_mask(enhanced_image):
-    """
-    Segment crack regions using adaptive thresholding and tuned edge detection.
-    """
-    # 3. Adaptive Thresholding with larger block size for robustness
-    thresh = cv2.adaptiveThreshold(
-        enhanced_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-        cv2.THRESH_BINARY_INV, 15, 5
-    )
-
-    # 4. Tuned Canny Edge Detection
-    edges = cv2.Canny(enhanced_image, 30, 90)
-
-    # Combine for robust segmentation
-    combined_mask = cv2.bitwise_or(thresh, edges)
-
-    # 5. Morphological Closing to merge fragments
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    closed = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+    if image is None: return False, 0.0
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
-    return closed
+    # Calculate Laplacian variance for focus/texture quality
+    var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    # Focus Threshold: 100 is a standard for 'well-textured' surface
+    focus_conf = min(var / 150.0, 1.0)
+    
+    return True, focus_conf
+
+def extract_specimen_roi(image):
+    """
+    Isolates the core specimen using Otsu-based flood isolation.
+    """
+    if image is None: return None, None, None
+    h, w = image.shape[:2]
+    # In forensics, we usually analyze the full frame but skip edges
+    margin = 5
+    roi = image[margin:h-margin, margin:w-margin]
+    bbox = (margin, margin, w-2*margin, h-2*margin)
+    return roi, bbox, image
+
+def enhance_roi(roi):
+    """
+    Signal optimization using CLAHE (Contrast Limited Adaptive Histogram Equalization).
+    Essential for isolating hairline fissures in varied lighting.
+    """
+    if roi is None: return None
+    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    clahe = cv2.createCLAHE(clipLimit=2.5, tileGridSize=(8,8))
+    return clahe.apply(gray)

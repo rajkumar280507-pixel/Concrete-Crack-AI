@@ -1,4 +1,5 @@
-tensorflow-cpu
+torch
+torchvision
 numpy<2.0.0
 opencv-python-headless
 pandas
@@ -9,3 +10,4 @@ pillow
 scikit-image
 gunicorn
 python-dotenv
+fpdf2
