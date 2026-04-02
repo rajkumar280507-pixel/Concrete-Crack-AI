@@ -246,14 +246,27 @@
 
         @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } }
         
-        /* Mobile Speed Optimization: Reduced Blur/Transparency */
+        /* High-Performance Mobile Layout Update */
         @media (max-width: 768px) {
             :root { --header-h: 60px; }
             .figure:hover { transform: none; }
-            .card { backdrop-filter: blur(5px); }
+            .card { backdrop-filter: blur(5px); padding: 1.5rem; border-radius: 20px; }
             .hero-banner h1 { font-size: 2.2rem; }
             .hero-banner p { font-size: 0.9rem; }
-            .upload-card { padding: 2.5rem; }
+            .upload-card { padding: 1.5rem; }
+            
+            /* Vertical Forensic Stack */
+            .research-row { 
+                grid-template-columns: 1fr !important; 
+                gap: 2rem; 
+                padding: 2rem 0;
+            }
+            .figure { aspect-ratio: 16/10 !important; height: auto !important; }
+            .metric-card { padding: 1rem; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .header-container { padding: 0 1rem; }
+            .nav-tabs { gap: 0.5rem; }
+            .nav-item { padding: 10px 15px; font-size: 0.8rem; }
         }
     </style>
 </head>
