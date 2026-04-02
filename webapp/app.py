@@ -218,39 +218,35 @@ def gen_frames():
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/delete/<int:scan_id>', methods=['POST', 'GET'])
+@app.route('/delete/<string:scan_id>', methods=['POST'])
 def delete_scan(scan_id):
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         
-        # Get filename to delete physical files
+        # Get filename to delete the actual image file too
         cursor.execute("SELECT filename FROM scans_v2 WHERE id = ?", (scan_id,))
         row = cursor.fetchone()
         
         if row:
             filename = row[0]
-            # Delete main file
-            main_path = os.path.join(UPLOAD_FOLDER, filename)
-            if os.path.exists(main_path): os.remove(main_path)
-            # Delete analytic file
-            proc_path = os.path.join(UPLOAD_FOLDER, f"proc_{filename}")
-            if os.path.exists(proc_path): os.remove(proc_path)
-            # Delete all forensic stages
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            
+            # Delete stage images if they exist
             img_id = os.path.splitext(filename)[0]
             stages_dir = os.path.join(UPLOAD_FOLDER, 'stages')
-            if os.path.exists(stages_dir):
-                for f in os.listdir(stages_dir):
-                    if img_id in f:
-                        try: os.remove(os.path.join(stages_dir, f))
-                        except: pass
+            for f in os.listdir(stages_dir):
+                if img_id in f:
+                    os.remove(os.path.join(stages_dir, f))
         
         cursor.execute("DELETE FROM scans_v2 WHERE id = ?", (scan_id,))
         conn.commit()
         conn.close()
-        return jsonify({"success": True, "message": "Record and files purged successfully."})
+        return jsonify({"success": True})
     except Exception as e:
-        print(f"Purge Error: {e}")
+        print(f"Delete Error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == '__main__':
