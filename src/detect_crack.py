@@ -1,6 +1,13 @@
 import os
 import cv2
-import torch
+try:
+    import torch
+    import torch.nn as nn
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    print("Warning: PyTorch not found. Using Pure OpenCV Forensic Engine.")
+
 import datetime
 import time
 import numpy as np
@@ -11,7 +18,7 @@ from src.preprocessing import (
     enhance_roi,
     validate_surface,
 )
-from src.segmentation import structural_forensic_segmentation, UNet
+from src.segmentation import structural_forensic_segmentation
 from src.postprocessing import (
     isolate_crack_network,
     refine_crack_mask,
@@ -27,15 +34,18 @@ class ConcreteCrackDetector:
     def __init__(self, model_path=None, device="cpu"):
         self.device = device
         self.weights_loaded = False
-        self.model = UNet(n_channels=3, n_classes=1)
+        self.model = None
         
-        if model_path and os.path.exists(model_path):
-            try:
-                self.model.load_state_dict(torch.load(model_path, map_location=device))
-                self.weights_loaded = True
-            except Exception as e:
-                print(f"Model alert: {e}")
-        self.model.to(device)
+        if TORCH_AVAILABLE:
+            from src.segmentation import UNet
+            self.model = UNet(n_channels=3, n_classes=1)
+            if model_path and os.path.exists(model_path):
+                try:
+                    self.model.load_state_dict(torch.load(model_path, map_location=device))
+                    self.weights_loaded = True
+                    self.model.to(device)
+                except Exception as e:
+                    print(f"Model alert: {e}")
 
     def analyze_frame(self, frame):
         """
