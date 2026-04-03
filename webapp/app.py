@@ -184,6 +184,28 @@ def download_report(scan_id):
             pdf.cell(200, 10, txt=f"Estimated Depth: {m.get('depth_val', 0.0)} {unit if unit != 'px' else 'mm'}", ln=True)
             
             pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], f"report_{scan_id}.pdf")
+            
+            # Forensic Panel Attachments
+            stages = report.get('stages', {})
+            titles = {
+                "p1_original": "Phase 1: Original Surface Specimen",
+                "p2_enhanced": "Phase 2: Signal Optimization (Enhanced)",
+                "p3_mask": "Phase 3: Crack Region Isolation (Mask)",
+                "p4_skeleton": "Phase 4: Axial Geometry (Skeleton)",
+                "p5_assessment": "Phase 5: Final Forensic Assessment"
+            }
+            
+            for key, title in titles.items():
+                if key in stages:
+                    pdf.add_page()
+                    pdf.set_font("Arial", 'B', 12)
+                    pdf.cell(200, 10, txt=title, ln=True, align='C')
+                    
+                    img_path = os.path.join(app.config['UPLOAD_FOLDER'], stages[key].replace('stages/', 'stages/')) 
+                    if os.path.exists(img_path):
+                        # Calculate dimensions to maintain aspect ratio
+                        pdf.image(img_path, x=10, y=30, w=190)
+            
             pdf.output(pdf_path)
             return send_file(pdf_path, as_attachment=True)
     except Exception as e:
