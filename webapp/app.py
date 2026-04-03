@@ -104,7 +104,6 @@ def upload_file():
     try:
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            m = report.get('measurements', {})
             cursor.execute("""
                 INSERT INTO scans_v2 (
                     id, site_tag, surface_type, original_img, processed_img, 
@@ -119,10 +118,10 @@ def upload_file():
                 report.get('classification', {}).get('severity', 'Non-crack'),
                 report.get('classification', {}).get('hazard', 'None'),
                 report.get('confidence_percent', 0.0),
-                m.get('length_px', 0.0),
-                m.get('avg_width_px', 0.0),
-                m.get('max_width_px', 0.0),
-                m.get('depth_reason', 'N/A'),
+                report.get('measurements', {}).get('length_px', 0.0),
+                report.get('measurements', {}).get('avg_width_px', 0.0),
+                report.get('measurements', {}).get('max_width_px', 0.0),
+                report.get('measurements', {}).get('depth_reason', 'N/A'),
                 json.dumps(report, default=str)
             ))
             conn.commit()
