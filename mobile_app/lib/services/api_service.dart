@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Replace with your local IP or deployed Render URL
-  static const String baseUrl = 'http://10.0.2.2:5000'; // Standard Android Emulator Localhost
+  // Connected to live Render Cloud Backend for Global Access
+  static const String baseUrl = 'https://concrete-crack-ai.onrender.com';
 
   static Future<Map<String, dynamic>> uploadImage(File imageFile) async {
     try {
