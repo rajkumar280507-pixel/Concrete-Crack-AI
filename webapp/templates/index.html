@@ -727,6 +727,15 @@
             const hasResults = "{{ 'true' if original_img else 'false' }}";
             if (hasResults === 'true') showTab('dashboard');
         });
+
+        // Register PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('SW registration failed'));
+            });
+        }
     </script>
 </body>
 </html>
