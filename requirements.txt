@@ -9,3 +9,4 @@ scikit-image
 gunicorn
 python-dotenv
 fpdf2
+scipy

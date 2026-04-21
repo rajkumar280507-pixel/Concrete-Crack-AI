@@ -131,6 +131,70 @@ def upload_file():
     return render_template('index.html', original_img=filename, processed_img=f"proc_{filename}",
                            score=report.get('confidence_percent', 0), report=report, scan_id=scan_id)
 
+@app.route('/api/predict', methods=['POST'])
+def api_predict():
+    global detector
+    file = request.files.get('file')
+    if not file:
+        return jsonify({"status": "error", "message": "No image uploaded"}), 400
+
+    filename = f"{uuid.uuid4().hex}_{file.filename}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    if not detector:
+        return jsonify({"status": "error", "message": "Detector not initialized"}), 500
+
+    try:
+        # Default calibration for mobile
+        report = detector.detect_cracks(filepath, app.config['UPLOAD_FOLDER'], 
+                                       scale_mm_per_px=0.2, 
+                                       target_unit="mm")
+        
+        # --- STRICT LOGIC GATES FOR MOBILE API ---
+        
+        # 1. Concrete Validation Gate
+        is_concrete = "low-confidence" not in report.get('surface_type', '').lower()
+        
+        # 2. Quality Gate (Mock logic based on confidence if detection failed)
+        is_low_quality = report.get('confidence_percent', 100) < 30.0
+
+        sanitized_report = {
+            "inspection_id": report.get('inspection_id'),
+            "timestamp": report.get('timestamp'),
+            "surface_type": report.get('surface_type'),
+            "crack_detected": False, # Default
+            "confidence_percent": report.get('confidence_percent', 0.0),
+            "original_url": f"/static/uploads/{filename}",
+            "processed_url": f"/static/uploads/proc_{filename}",
+            "message": "Detection successful",
+            "is_valid_concrete": is_concrete
+        }
+
+        # Logic Gate Implementation
+        if not is_concrete:
+            sanitized_report["message"] = "Invalid Surface: Please upload a clear concrete surface image."
+            sanitized_report["crack_detected"] = False
+        elif is_low_quality:
+            sanitized_report["message"] = "Insufficient Quality: Image is too blurry or dark."
+            sanitized_report["crack_detected"] = False
+        elif not report.get('crack_detected', False):
+            sanitized_report["message"] = "No valid concrete cracks detected."
+            sanitized_report["crack_detected"] = False
+        else:
+            # ONLY IF ALL GATES PASS: Show engineering metrics
+            sanitized_report["crack_detected"] = True
+            sanitized_report["severity"] = report.get('classification', {}).get('severity', 'Stable')
+            sanitized_report["hazard"] = report.get('classification', {}).get('hazard', 'Low')
+            sanitized_report["measurements"] = report.get('measurements', {})
+            sanitized_report["recommendation"] = report.get('recommendation', "")
+            sanitized_report["crack_type"] = report.get('classification', {}).get('type', 'Structural')
+
+        return jsonify({"status": "success", "data": sanitized_report})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/get_history')
 def get_history():
     try:
